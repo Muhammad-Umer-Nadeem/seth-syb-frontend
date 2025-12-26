@@ -141,7 +141,7 @@ export default function Footer() {
           <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '4rem 1.5rem' }}>
             <div style={{ maxWidth: '56rem', margin: '0 auto', textAlign: 'center' }}>
               <h3 className="font-serif" style={{ fontSize: 'clamp(1.875rem, 4vw, 2.25rem)', marginBottom: '1rem' }}>
-                Join the <span className="text-gradient-gold">Saith SYB</span> World
+                Join the <span className="text-gradient-gold">Seth SYB</span> World
               </h3>
               <p
                 style={{
@@ -211,7 +211,7 @@ export default function Footer() {
                 }}
               >
                 <h2 className="font-serif" style={{ fontSize: '1.875rem', margin: 0 }}>
-                  <span className="text-gradient-gold">Saith</span>
+                  <span className="text-gradient-gold">Seth</span>
                   <span style={{ color: '#ffffff' }}> SYB</span>
                 </h2>
               </button>
@@ -368,7 +368,7 @@ export default function Footer() {
                 </li>
                 <li>
                   <a
-                    href="mailto:contact@saithsyb.com"
+                    href="mailto:contact@sethsyb.com"
                     style={{
                       display: 'flex',
                       alignItems: 'center',
@@ -383,7 +383,7 @@ export default function Footer() {
                     onMouseLeave={(e) => (e.currentTarget.style.color = '#a0a0a0')}
                   >
                     <Mail size={20} style={{ color: '#c9a962', flexShrink: 0 }} />
-                    contact@saithsyb.com
+                    contact@sethsyb.com
                   </a>
                 </li>
                 <li>
