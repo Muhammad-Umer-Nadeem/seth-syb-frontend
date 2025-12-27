@@ -306,7 +306,7 @@ export default function Header() {
               }}
             >
               <h1 className="font-serif" style={{ fontSize: 'clamp(1.5rem, 5vw, 1.875rem)', letterSpacing: '0.1em', margin: 0 }}>
-                <span className="text-gradient-gold">Saith</span>
+                <span className="text-gradient-gold">Seth</span>
                 <span style={{ color: '#ffffff' }}> SYB</span>
               </h1>
               <span className="logo-underline" />
@@ -317,9 +317,14 @@ export default function Header() {
               <button className="icon-button desktop-only" aria-label="Search">
                 <Search size={20} />
               </button>
-              <button className="icon-button" aria-label="Account">
+              <button
+                className="icon-button"
+                aria-label="Account"
+                onClick={() => navigate('/signin')}
+              >
                 <User size={20} />
               </button>
+
               <button
                 onClick={() => setIsCartOpen(true)}
                 className="icon-button"
