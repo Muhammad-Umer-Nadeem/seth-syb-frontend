@@ -4,13 +4,18 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "node server.js",
     "build": "vite build",
+    "preview": "npm run build && NODE_ENV=production node server.js",
+    "start": "NODE_ENV=production node server.js",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "vite:dev": "vite",
+    "vite:preview": "vite preview"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.17",
+    "compression": "^1.7.5",
+    "express": "^4.22.1",
     "lucide-react": "^0.555.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
