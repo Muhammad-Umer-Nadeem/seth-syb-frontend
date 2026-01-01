@@ -445,11 +445,11 @@ export default function Footer() {
             }}
           >
             <p style={{ fontSize: '0.875rem', color: '#a0a0a0', fontFamily: 'Inter, sans-serif' }}>
-              © 2025 Saith SYB. All rights reserved.
+              © 2026 Saith SYB. All rights reserved.
             </p>
             <div style={{ display: 'flex', gap: '2rem', fontSize: '0.875rem', fontFamily: 'Inter, sans-serif' }}>
               <a
-                href="#"
+                href="/terms-and-conditions"
                 style={{
                   color: '#a0a0a0',
                   textDecoration: 'none',
@@ -461,7 +461,7 @@ export default function Footer() {
                 Terms
               </a>
               <a
-                href="#"
+                href="/privacy-policy"
                 style={{
                   color: '#a0a0a0',
                   textDecoration: 'none',
@@ -472,7 +472,7 @@ export default function Footer() {
               >
                 Privacy
               </a>
-              <a
+              {/* <a
                 href="#"
                 style={{
                   color: '#a0a0a0',
@@ -483,7 +483,7 @@ export default function Footer() {
                 onMouseLeave={(e) => (e.currentTarget.style.color = '#a0a0a0')}
               >
                 Cookies
-              </a>
+              </a> */}
             </div>
           </div>
         </div>
