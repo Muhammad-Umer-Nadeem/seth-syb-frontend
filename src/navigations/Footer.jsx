@@ -210,10 +210,18 @@ export default function Footer() {
                   display: 'inline-block',
                 }}
               >
-                <h2 className="font-serif" style={{ fontSize: '1.875rem', margin: 0 }}>
-                  <span className="text-gradient-gold">Seth</span>
-                  <span style={{ color: '#ffffff' }}> SYB</span>
+                <h2 style={{ margin: 0 }}>
+                  <img
+                    src="/sethsyblogo.png"
+                    alt="Seth SYB"
+                    style={{
+                      height: '93px',
+                      width: 'auto',
+                      display: 'block',
+                    }}
+                  />
                 </h2>
+
               </button>
               <p
                 style={{
@@ -417,7 +425,7 @@ export default function Footer() {
                   border: '1px solid rgba(255, 255, 255, 0.1)',
                 }}
               >
-               
+
               </div>
             </div>
           </div>

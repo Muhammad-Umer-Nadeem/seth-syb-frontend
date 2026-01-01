@@ -259,20 +259,25 @@ export default function Header() {
                 onClick={() => scrollToSection('home')}
                 className="logo"
                 style={{
-                  position: 'relative',
                   background: 'transparent',
                   border: 'none',
                   cursor: 'pointer',
                   padding: 0,
                 }}
+                aria-label="Go to home"
               >
-                <h1 className="font-serif" style={{ fontSize: 'clamp(1.5rem, 5vw, 1.875rem)', letterSpacing: '0.1em', margin: 0 }}>
-                  <span className="text-gradient-gold">Saith</span>
-                  <span style={{ color: '#ffffff' }}> SYB</span>
-                </h1>
-                <span className="logo-underline" />
+                <img
+                  src="/sethsyblogo.png"
+                  alt="Saith SYB"
+                  style={{
+                    height: '60px',
+                    width: 'auto',
+                    display: 'block',
+                  }}
+                />
               </button>
             </div>
+
 
             {/* Desktop Navigation (Center in desktop) */}
             <div className="desktop-only" style={{ display: 'flex', alignItems: 'center', gap: '3rem' }}>
