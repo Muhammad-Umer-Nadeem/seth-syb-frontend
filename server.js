@@ -8,7 +8,7 @@ import { SEO_DATA } from './src/SeoConfig.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const isProd = process.env.NODE_ENV === 'production';
-const BASE_URL = process.env.PUBLIC_SITE_URL || 'http://localhost:3000';
+const BASE_URL = 'http://sethsyb.com';
 const DEFAULT_IMAGE = `${BASE_URL}/og-default.jpg`;
 
 const ROUTE_MATCHERS = [
