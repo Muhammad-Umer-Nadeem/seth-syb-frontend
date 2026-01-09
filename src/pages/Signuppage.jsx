@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export default function Signuppage() {
     const [isVisible, setIsVisible] = useState(false);
@@ -11,9 +12,14 @@ export default function Signuppage() {
     });
     const [agreeToTerms, setAgreeToTerms] = useState(false);
 
-    // New state for password visibility
+    // Password visibility toggles
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+    // UI states
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
 
     const navigate = useNavigate();
 
@@ -21,14 +27,58 @@ export default function Signuppage() {
         setIsVisible(true);
     }, []);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        setError('');
+        setSuccess('');
+
+        // Client-side checks
         if (formData.password !== formData.confirmPassword) {
-            alert('Passwords do not match');
+            setError('Passwords do not match');
             return;
         }
-        console.log('Sign up attempt:', formData);
-        // Here you would typically call your auth API
+
+        if (!agreeToTerms) {
+            setError('You must agree to the Terms of Service and Privacy Policy');
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            const response = await axios.post(
+                'https://sethsybapi.baig.cloud/api/auth/register',
+                {
+                    name: formData.fullName.trim(),
+                    email: formData.email.trim(),
+                    password: formData.password,
+                    password_confirmation: formData.confirmPassword
+                }
+            );
+
+            setSuccess('User registered successfully! Please check your email for verification.');
+
+            // Redirect to sign-in page after 3 seconds
+            setTimeout(() => {
+                navigate('/signin');
+            }, 3000);
+
+        } catch (err) {
+            if (err.response?.data?.message) {
+                setError(err.response.data.message);
+            } else if (err.response?.data?.errors) {
+                // Handle Laravel validation errors
+                const validationErrors = err.response.data.errors;
+                const errorMessages = Object.keys(validationErrors)
+                    .map(key => `${key.charAt(0).toUpperCase() + key.slice(1)}: ${validationErrors[key][0]}`)
+                    .join('\n');
+                setError(errorMessages);
+            } else {
+                setError('Something went wrong. Please try again later.');
+            }
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleChange = (e) => {
@@ -38,113 +88,111 @@ export default function Signuppage() {
     return (
         <>
             <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap');
-        
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-20px); }
-        }
-        
-        @keyframes shimmer {
-          0%, 100% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-        }
-        
-        .animate-float {
-          animation: float 6s ease-in-out infinite;
-        }
-        
-        .font-serif {
-          font-family: 'Playfair Display', serif;
-        }
-        
-        .text-gradient-gold {
-          background: linear-gradient(135deg, #c9a962 0%, #f4e4bc 50%, #c9a962 100%);
-          -webkit-background-clip: text;
-          background-clip: text;
-          -webkit-text-fill-color: transparent;
-        }
-        
-        .text-gradient-gold-shimmer {
-          background: linear-gradient(135deg, #c9a962 0%, #f4e4bc 50%, #c9a962 100%);
-          background-size: 200% 200%;
-          -webkit-background-clip: text;
-          background-clip: text;
-          -webkit-text-fill-color: transparent;
-          animation: shimmer 3s ease-in-out infinite;
-        }
-        
-        .btn-gold-gradient {
-          background: linear-gradient(135deg, #c9a962 0%, #f4e4bc 50%, #c9a962 100%);
-          background-size: 200% 200%;
-          transition: all 0.5s ease;
-        }
-        
-        .btn-gold-gradient:hover {
-          background-position: 100% 50%;
-          box-shadow: 0 0 30px rgba(201, 169, 98, 0.5);
-          transform: translateY(-2px);
-        }
-        
-        .luxury-line-vertical {
-          background: linear-gradient(180deg, transparent, rgba(201, 169, 98, 0.3), transparent);
-        }
-        
-        .input-luxury {
-          background: rgba(255, 255, 255, 0.03);
-          border: 1px solid rgba(201, 169, 98, 0.2);
-          transition: all 0.3s ease;
-        }
-        
-        .input-luxury:focus {
-          outline: none;
-          border-color: #c9a962;
-          background: rgba(255, 255, 255, 0.05);
-          box-shadow: 0 0 20px rgba(201, 169, 98, 0.2);
-        }
-        
-        .divider-line {
-          background: linear-gradient(90deg, transparent, rgba(201, 169, 98, 0.3), transparent);
-        }
+                @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap');
+                
+                @keyframes float {
+                  0%, 100% { transform: translateY(0px); }
+                  50% { transform: translateY(-20px); }
+                }
+                
+                @keyframes shimmer {
+                  0%, 100% { background-position: 0% 50%; }
+                  50% { background-position: 100% 50%; }
+                }
+                
+                .animate-float {
+                  animation: float 6s ease-in-out infinite;
+                }
+                
+                .font-serif {
+                  font-family: 'Playfair Display', serif;
+                }
+                
+                .text-gradient-gold {
+                  background: linear-gradient(135deg, #c9a962 0%, #f4e4bc 50%, #c9a962 100%);
+                  -webkit-background-clip: text;
+                  background-clip: text;
+                  -webkit-text-fill-color: transparent;
+                }
+                
+                .text-gradient-gold-shimmer {
+                  background: linear-gradient(135deg, #c9a962 0%, #f4e4bc 50%, #c9a962 100%);
+                  background-size: 200% 200%;
+                  -webkit-background-clip: text;
+                  background-clip: text;
+                  -webkit-text-fill-color: transparent;
+                  animation: shimmer 3s ease-in-out infinite;
+                }
+                
+                .btn-gold-gradient {
+                  background: linear-gradient(135deg, #c9a962 0%, #f4e4bc 50%, #c9a962 100%);
+                  background-size: 200% 200%;
+                  transition: all 0.5s ease;
+                }
+                
+                .btn-gold-gradient:hover {
+                  background-position: 100% 50%;
+                  box-shadow: 0 0 30px rgba(201, 169, 98, 0.5);
+                  transform: translateY(-2px);
+                }
+                
+                .luxury-line-vertical {
+                  background: linear-gradient(180deg, transparent, rgba(201, 169, 98, 0.3), transparent);
+                }
+                
+                .input-luxury {
+                  background: rgba(255, 255, 255, 0.03);
+                  border: 1px solid rgba(201, 169, 98, 0.2);
+                  transition: all 0.3s ease;
+                }
+                
+                .input-luxury:focus {
+                  outline: none;
+                  border-color: #c9a962;
+                  background: rgba(255, 255, 255, 0.05);
+                  box-shadow: 0 0 20px rgba(201, 169, 98, 0.2);
+                }
+                
+                .divider-line {
+                  background: linear-gradient(90deg, transparent, rgba(201, 169, 98, 0.3), transparent);
+                }
 
-        .back-btn {
-          transition: all 0.3s ease;
-        }
+                .back-btn {
+                  transition: all 0.3s ease;
+                }
 
-        .back-btn:hover {
-          transform: translateX(-4px);
-        }
+                .back-btn:hover {
+                  transform: translateX(-4px);
+                }
 
-        .back-btn svg {
-          transition: transform 0.3s ease;
-        }
+                .back-btn svg {
+                  transition: transform 0.3s ease;
+                }
 
-        .back-btn:hover svg {
-          transform: translateX(-4px);
-        }
+                .back-btn:hover svg {
+                  transform: translateX(-4px);
+                }
 
-        /* Eye icon button style */
-        .password-toggle {
-          position: absolute;
-          right: 12px;
-          top: 50%;
-          transform: translateY(-50%);
-          cursor: pointer;
-          color: #c9a962;
-          transition: color 0.3s ease;
-        }
+                .password-toggle {
+                  position: absolute;
+                  right: 12px;
+                  top: 50%;
+                  transform: translateY(-50%);
+                  cursor: pointer;
+                  color: #c9a962;
+                  transition: color 0.3s ease;
+                }
 
-        .password-toggle:hover {
-          color: #f4e4bc;
-        }
-      `}</style>
+                .password-toggle:hover {
+                  color: #f4e4bc;
+                }
+            `}</style>
 
             <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black py-12 px-4">
                 {/* Background Effects */}
                 <div className="absolute inset-0">
                     <div className="absolute inset-0 bg-gradient-to-b from-black via-black to-neutral-900" />
 
-                    {/* Animated Blobs */}
                     <div
                         className="absolute top-1/4 left-1/4 w-96 h-96 md:w-[600px] md:h-[600px] rounded-full blur-3xl animate-float"
                         style={{ background: 'rgba(201, 169, 98, 0.08)' }}
@@ -154,20 +202,18 @@ export default function Signuppage() {
                         style={{ background: 'rgba(201, 169, 98, 0.06)', animationDelay: '1s' }}
                     />
 
-                    {/* Decorative Lines */}
                     <div className="absolute inset-0 opacity-20">
                         <div className="luxury-line-vertical absolute top-0 left-1/4 w-px h-full" />
                         <div className="luxury-line-vertical absolute top-0 right-1/4 w-px h-full" />
                     </div>
 
-                    {/* Corner Decorations */}
                     <div className="absolute top-10 left-10 md:top-20 md:left-20 w-16 h-16 md:w-32 md:h-32 border-l border-t border-yellow-700/20" />
                     <div className="absolute top-10 right-10 md:top-20 md:right-20 w-16 h-16 md:w-32 md:h-32 border-r border-t border-yellow-700/20" />
                     <div className="absolute bottom-10 left-10 md:bottom-20 md:left-20 w-16 h-16 md:w-32 md:h-32 border-l border-b border-yellow-700/20" />
                     <div className="absolute bottom-10 right-10 md:bottom-20 md:right-20 w-16 h-16 md:w-32 md:h-32 border-r border-b border-yellow-700/20" />
                 </div>
 
-                {/* Back to Homepage Button */}
+                {/* Back Button */}
                 <Link
                     to="/"
                     className="back-btn absolute top-6 left-6 md:top-8 md:left-8 z-20 flex items-center gap-2 text-[#c9a962] hover:text-[#f4e4bc] transition-colors"
@@ -178,9 +224,8 @@ export default function Signuppage() {
                     <span className="text-sm tracking-wider uppercase font-medium">Back to Homepage</span>
                 </Link>
 
-                {/* Content */}
+                {/* Main Card */}
                 <div className="relative z-10 w-full max-w-md">
-                    {/* Sign Up Form Card */}
                     <div
                         className="bg-black/40 backdrop-blur-xl border border-yellow-700/20 rounded-lg p-8 md:p-10 transition-all duration-1000"
                         style={{
@@ -205,9 +250,23 @@ export default function Signuppage() {
                             </p>
                         </div>
 
+                        {/* Success Message */}
+                        {success && (
+                            <div className="mb-6 p-4 bg-green-900/30 border border-green-500/40 rounded-lg text-green-300 text-center text-sm">
+                                {success}
+                            </div>
+                        )}
+
+                        {/* Error Message */}
+                        {error && (
+                            <div className="mb-6 p-4 bg-red-900/30 border border-red-500/40 rounded-lg text-red-300 text-sm whitespace-pre-line">
+                                {error}
+                            </div>
+                        )}
+
                         {/* Form */}
                         <form onSubmit={handleSubmit} className="space-y-5">
-                            {/* Full Name Field */}
+                            {/* Full Name */}
                             <div>
                                 <label htmlFor="fullName" className="block text-gray-300 text-sm tracking-wide uppercase mb-2">
                                     Full Name
@@ -221,10 +280,11 @@ export default function Signuppage() {
                                     className="input-luxury w-full px-4 py-3 rounded text-white placeholder-gray-500"
                                     placeholder="John Doe"
                                     required
+                                    disabled={loading}
                                 />
                             </div>
 
-                            {/* Email Field */}
+                            {/* Email */}
                             <div>
                                 <label htmlFor="email" className="block text-gray-300 text-sm tracking-wide uppercase mb-2">
                                     Email Address
@@ -238,10 +298,11 @@ export default function Signuppage() {
                                     className="input-luxury w-full px-4 py-3 rounded text-white placeholder-gray-500"
                                     placeholder="your@email.com"
                                     required
+                                    disabled={loading}
                                 />
                             </div>
 
-                            {/* Password Field with Toggle */}
+                            {/* Password */}
                             <div className="relative">
                                 <label htmlFor="password" className="block text-gray-300 text-sm tracking-wide uppercase mb-2">
                                     Password
@@ -256,12 +317,13 @@ export default function Signuppage() {
                                         className="input-luxury w-full px-4 py-3 pr-12 rounded text-white placeholder-gray-500"
                                         placeholder="Create a password"
                                         required
+                                        disabled={loading}
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute inset-y-0 right-0 flex items-center pr-4 text-[#c9a962] hover:text-[#f4e4bc] transition-colors"
-                                        aria-label={showPassword ? "Hide password" : "Show password"}
+                                        className="password-toggle"
+                                        disabled={loading}
                                     >
                                         {showPassword ? (
                                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -277,7 +339,7 @@ export default function Signuppage() {
                                 </div>
                             </div>
 
-                            {/* Confirm Password Field with Toggle */}
+                            {/* Confirm Password */}
                             <div className="relative">
                                 <label htmlFor="confirmPassword" className="block text-gray-300 text-sm tracking-wide uppercase mb-2">
                                     Confirm Password
@@ -292,12 +354,13 @@ export default function Signuppage() {
                                         className="input-luxury w-full px-4 py-3 pr-12 rounded text-white placeholder-gray-500"
                                         placeholder="Confirm your password"
                                         required
+                                        disabled={loading}
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                        className="absolute inset-y-0 right-0 flex items-center pr-4 text-[#c9a962] hover:text-[#f4e4bc] transition-colors"
-                                        aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                                        className="password-toggle"
+                                        disabled={loading}
                                     >
                                         {showConfirmPassword ? (
                                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -313,8 +376,7 @@ export default function Signuppage() {
                                 </div>
                             </div>
 
-
-                            {/* Terms Agreement */}
+                            {/* Terms */}
                             <div className="flex items-start gap-2">
                                 <input
                                     type="checkbox"
@@ -323,13 +385,14 @@ export default function Signuppage() {
                                     onChange={(e) => setAgreeToTerms(e.target.checked)}
                                     className="w-4 h-4 mt-1 rounded border-yellow-700/30 bg-transparent accent-[#c9a962] cursor-pointer"
                                     required
+                                    disabled={loading}
                                 />
                                 <label htmlFor="terms" className="text-gray-400 text-sm cursor-pointer">
                                     I agree to the{' '}
                                     <button type="button" className="text-[#c9a962] hover:text-[#f4e4bc] transition-colors">
                                         Terms of Service
-                                    </button>
-                                    {' '}and{' '}
+                                    </button>{' '}
+                                    and{' '}
                                     <button type="button" className="text-[#c9a962] hover:text-[#f4e4bc] transition-colors">
                                         Privacy Policy
                                     </button>
@@ -339,9 +402,10 @@ export default function Signuppage() {
                             {/* Submit Button */}
                             <button
                                 type="submit"
-                                className="btn-gold-gradient w-full text-black px-8 py-4 text-sm tracking-widest uppercase font-semibold rounded cursor-pointer border-0"
+                                disabled={loading}
+                                className="btn-gold-gradient w-full text-black px-8 py-4 text-sm tracking-widest uppercase font-semibold rounded border-0 disabled:opacity-70 disabled:cursor-not-allowed transition-all"
                             >
-                                Create Account
+                                {loading ? 'Creating Account...' : 'Create Account'}
                             </button>
                         </form>
 
@@ -352,11 +416,10 @@ export default function Signuppage() {
                             <div className="flex-1 h-px divider-line" />
                         </div>
 
-                        {/* Social Sign Up */}
+                        {/* Social Buttons */}
                         <div className="grid grid-cols-2 gap-4">
                             <button
                                 type="button"
-                                onClick={() => console.log('Google sign up')}
                                 className="border border-yellow-700/30 text-white hover:bg-yellow-700/10 hover:border-[#c9a962] px-6 py-3 text-sm tracking-wider uppercase transition-all duration-500 bg-transparent rounded cursor-pointer flex items-center justify-center gap-2"
                             >
                                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
@@ -369,7 +432,6 @@ export default function Signuppage() {
                             </button>
                             <button
                                 type="button"
-                                onClick={() => console.log('GitHub sign up')}
                                 className="border border-yellow-700/30 text-white hover:bg-yellow-700/10 hover:border-[#c9a962] px-6 py-3 text-sm tracking-wider uppercase transition-all duration-500 bg-transparent rounded cursor-pointer flex items-center justify-center gap-2"
                             >
                                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
